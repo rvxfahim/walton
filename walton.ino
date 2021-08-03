@@ -73,10 +73,10 @@ class sdList{
       // Warning, openNext starts at the current position of dir so a
       // rewind may be necessary in your application.
       gslc_ElemXListboxReset(&m_gui,m_pElemListbox1);
-      char name_of_dir[30]={0};
-      char listofdir[20][30]={0};
-      char name_of_file[30]={0};
-      char list_of_file[20][30]={0};
+      char name_of_dir[30] PROGMEM={0};
+      char listofdir[50][30] PROGMEM={0};
+      char name_of_file[30] PROGMEM={0};
+      char list_of_file[50][30] PROGMEM={0};
       int i=0; 
       int j=0;
       while (file.openNext(&dir, O_RDONLY)) {
@@ -91,7 +91,7 @@ class sdList{
         { 
           // Indicate a directory.
           
-          file.getName(name_of_dir,26);
+          file.getName(name_of_dir,128);
           Serial.write('/');
           Serial.println();
           Serial.println("printing the directory name from 2D array");
@@ -103,7 +103,7 @@ class sdList{
         if (file.isFile())
         {
           //it is a file
-          file.getName(name_of_file,26);
+          file.getName(name_of_file,128);
           strcpy(list_of_file[j], name_of_file);
           j++;
         }
@@ -118,7 +118,7 @@ class sdList{
       
       Serial.println("printing list of directories only");
         i=0;
-        while(i<=19){
+        while(i<=49){
         if(listofdir[i][0]=='\0')
         {
           Serial.println("no more directories");
@@ -129,7 +129,7 @@ class sdList{
         }
         Serial.println("printing list of files only");
         i=0;
-        while(i<=19){
+        while(i<=49){
         if(list_of_file[i][0]=='\0')
         {
           Serial.println("no more files");
@@ -142,7 +142,7 @@ class sdList{
         
         i=0;
         j=0;   //added after subdirectory listing failed
-        while(i<=19){
+        while(i<=49){
         if(listofdir[i][0]=='\0')
         {
           Serial.println("no more directories");
@@ -167,7 +167,7 @@ class sdList{
         
         Serial.println("before adding files in list, here is the first file name:");
         Serial.println(list_of_file[0]);
-        while(i<=19){
+        while(i<=49){
         if(list_of_file[i][0]=='\0')
         {
           Serial.println("no more files");
@@ -323,6 +323,7 @@ bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos)
 
 
 const uint8_t chipSelect = SS;
+unsigned long last_time=0;
 void setup()
 {
   // ------------------------------------------------
@@ -370,5 +371,31 @@ void loop()
   // Periodically call GUIslice update function
   // ------------------------------------------------
   gslc_Update(&m_gui);
+
+
+    if(millis()-last_time>3000)
+    {
+      last_time=millis();
+        
+        Serial.println(freeMemory()); //print the free RAM left in Arduino every 3 seconds
+    }
     
+}
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+
+int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
 }
