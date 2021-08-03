@@ -152,7 +152,7 @@ class sdList{
           Serial.println("acTxt value is:");
           Serial.println(acTxt);
             if (gslc_ElemXListboxInsertItemAt(&m_gui,m_pElemListbox1,i,acTxt)) {
-              // successfully added new country
+              // successfully added new file in the list
               j=i+1;
               }
               else
