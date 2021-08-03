@@ -59,7 +59,7 @@ class sdList{
       // Open root directory
       if (!dir.open(param2)){
           dir.open("/");
-        sd1.errorHalt("dir.open failed, returning to root");
+          sd1.errorHalt("dir.open failed, returning to root");
                
       }
       
@@ -67,7 +67,7 @@ class sdList{
   
     static void update_list(){
       
-  
+      //use the directory set from set_dir() and update the listbox list
       // Open next file in root.
       // Warning, openNext starts at the current position of dir so a
       // rewind may be necessary in your application.
@@ -211,9 +211,13 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
       case E_ELEM_BTN2:
             
               if(setting_done)
-                { 
+                { sdList::set_dir(acTxt2);
                   sdList::update_list();
                   setting_done=false;
+                }
+                else
+                {
+                  
                 }
               
         break;
@@ -270,9 +274,14 @@ bool CbListbox(void* pvGui, void* pvElemRef, int16_t nSelId)
             Serial.println("directory open failed from listbox")
         }*/
         setting_done=true;
-        sdList::set_dir(acTxt2);
+        //sdList::set_dir(acTxt2);
+        
         //enter should work
       } 
+      else{
+        setting_done=false;
+        acTxt2[0]='/';
+      }
       break;
 
 //<Listbox Enums !End!>
@@ -313,162 +322,6 @@ bool CbSlidePos(void* pvGui,void* pvElemRef,int16_t nPos)
 
 
 const uint8_t chipSelect = SS;
-
-/* // file system object
-SdFat sd1;
-
-SdFile root;
-SdFile file;
-SdFile dir;
-
-class sdList{
-  public: 
-    static void set_dir()
-    {
-      // Open root directory
-      if (!dir.open("/")){
-        sd1.errorHalt("dir.open failed");
-      }
-    }
-    
-    static void set_dir(char param2[])
-    {
-      // Open root directory
-      if (!dir.open(param2)){
-          dir.open("/");
-        sd1.errorHalt("dir.open failed, returning to root");
-               
-      }
-      
-    }
-  
-    static void update_list(){
-      
-  
-      // Open next file in root.
-      // Warning, openNext starts at the current position of dir so a
-      // rewind may be necessary in your application.
-      gslc_ElemXListboxReset(&m_gui,m_pElemListbox1);
-      char name_of_dir[30]={0};
-      char listofdir[20][30]={0};
-      char name_of_file[30]={0};
-      char list_of_file[20][30]={0};
-      int i=0; 
-      int j=0;
-      while (file.openNext(&dir, O_RDONLY)) {
-        
-        file.printFileSize(&Serial);
-        Serial.write(' ');
-        file.printModifyDateTime(&Serial);
-        Serial.write(' ');
-        file.printName(&Serial);
-        //
-        if (file.isDir()&&!file.isHidden()) 
-        { 
-          // Indicate a directory.
-          
-          file.getName(name_of_dir,26);
-          Serial.write('/');
-          Serial.println();
-          Serial.println("printing the directory name from 2D array");
-          strcat(name_of_dir, "/");
-          Serial.println(name_of_dir);
-          strcpy(listofdir[i], name_of_dir);
-          i++;
-        }
-        if (file.isFile())
-        {
-          //it is a file
-          file.getName(name_of_file,26);
-          strcpy(list_of_file[j], name_of_file);
-          j++;
-        }
-        Serial.println();
-        file.close();
-      }
-      
-      if (dir.getError()) {
-        Serial.println("openNext failed");
-      } else {
-        Serial.println("Done!");
-      
-      Serial.println("printing list of directories only");
-        i=0;
-        while(i<=19){
-        if(listofdir[i][0]=='\0')
-        {
-          Serial.println("no more directories");
-          break;
-        }
-        Serial.println(listofdir[i]);
-        i++;
-        }
-        Serial.println("printing list of files only");
-        i=0;
-        while(i<=19){
-        if(list_of_file[i][0]=='\0')
-        {
-          Serial.println("no more files");
-          break;
-        }
-        Serial.println(list_of_file[i]);
-        i++;
-        }
-        //total rows:
-        
-        i=0;
-        while(i<=19){
-        if(listofdir[i][0]=='\0')
-        {
-          Serial.println("no more directories");
-          break;
-        }
-      
-          sprintf(acTxt,listofdir[i]);
-          Serial.println("acTxt value is:");
-          Serial.println(acTxt);
-            if (gslc_ElemXListboxInsertItemAt(&m_gui,m_pElemListbox1,i,acTxt)) {
-              // successfully added new country
-              j=i+1;
-              }
-              else
-              {
-                Serial.println("item entry failed");
-                }   
-        i++;
-        }
-        
-        i=0;
-  
-        Serial.println("before adding files in list, here is the first file name:");
-        Serial.println(list_of_file[0]);
-        while(i<=19){
-        if(list_of_file[i][0]=='\0')
-        {
-          Serial.println("no more files");
-          break;
-        }
-      
-          sprintf(acTxt,list_of_file[i]);
-            if (gslc_ElemXListboxInsertItemAt(&m_gui,m_pElemListbox1,j,acTxt)) {
-              // successfully added new country
-              }
-              else
-              {
-                Serial.println("item entry failed");
-                }  
-        i++;
-        j++;
-        } 
-      }
-      dir.close();
-    }
-};
- */
-
-
-
-
 void setup()
 {
   // ------------------------------------------------
@@ -518,4 +371,3 @@ void loop()
   gslc_Update(&m_gui);
     
 }
-

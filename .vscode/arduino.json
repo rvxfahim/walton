@@ -2,5 +2,7 @@
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
     "sketch": "walton.ino",
-    "output": "../build"
+    "output": "../build",
+    "port": "COM8",
+    "programmer": "arduino:usbasp"
 }
