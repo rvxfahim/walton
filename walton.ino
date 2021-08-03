@@ -347,7 +347,7 @@ void setup()
   gslc_Update(&m_gui);
   gslc_InitDebug(&DebugOut);
   // Initialize the SD.
-  if (!sd1.begin(chipSelect, SD_SCK_MHZ(50))) {
+  if (!sd1.begin(chipSelect, SD_SCK_MHZ(8))) {
     sd1.initErrorHalt(&Serial);
   }
   
