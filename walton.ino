@@ -44,6 +44,7 @@ SdFile root;
 SdFile file;
 SdFile dir;
 
+//defining a simple class using methods of sdFat library to handle the directory and file listing logic
 class sdList{
   public: 
     static void set_dir()
